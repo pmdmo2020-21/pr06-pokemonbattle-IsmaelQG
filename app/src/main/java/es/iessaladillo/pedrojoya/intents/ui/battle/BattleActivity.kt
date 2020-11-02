@@ -9,9 +9,11 @@ import es.iessaladillo.pedrojoya.intents.data.local.Database
 import es.iessaladillo.pedrojoya.intents.data.local.model.Pokemon
 import es.iessaladillo.pedrojoya.intents.databinding.BattleActivityBinding
 import es.iessaladillo.pedrojoya.intents.ui.selection.SelectionActivity
+import es.iessaladillo.pedrojoya.intents.ui.winner.WinnerActivity
 
 
 private const val RC_SELECTION_ACTIVITY: Int = 1
+private const val RC_WINNER_ACTIVITY: Int = 2
 
 class BattleActivity : AppCompatActivity() {
 
@@ -38,7 +40,7 @@ class BattleActivity : AppCompatActivity() {
         binding.btnStart.setOnClickListener{}
         setPokemon1(Database.getRandomPokemon())
         setPokemon2(Database.getRandomPokemon())
-        binding.btnStart.setOnClickListener { Toast.makeText(this, id.toString(), Toast.LENGTH_SHORT).show() }
+        binding.btnStart.setOnClickListener { navigateToWinnerActivityPokemon(pokemon1.id, pokemon2.id) }
     }
 
     private fun setPokemon1(pokemon: Pokemon) {
@@ -58,11 +60,15 @@ class BattleActivity : AppCompatActivity() {
         startActivityForResult(intent, RC_SELECTION_ACTIVITY)
     }
 
+    private fun navigateToWinnerActivityPokemon(id1: Long, id2 : Long) {
+        val intent = WinnerActivity.newIntent(this, id1, id2)
+        startActivityForResult(intent, RC_WINNER_ACTIVITY)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
         super.onActivityResult(requestCode, resultCode, intent)
         if (resultCode == RESULT_OK && requestCode == RC_SELECTION_ACTIVITY && intent != null) {
             extractResult(intent)
-            Toast.makeText(this, "hola", Toast.LENGTH_SHORT).show()
             if(pokemon == 1){
                 setPokemon1(Database.getPokemonById(id)!!)
             }

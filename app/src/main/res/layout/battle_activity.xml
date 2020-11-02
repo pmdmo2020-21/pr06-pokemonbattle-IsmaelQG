@@ -16,7 +16,7 @@
         android:paddingHorizontal="@dimen/cardPadding"
         app:layout_constraintBottom_toTopOf="@+id/llPokemon2"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_weight="2">
+        app:layout_constraintVertical_weight="1">
 
         <ImageView
             android:id="@+id/imgPokemon1"
@@ -48,7 +48,7 @@
         android:paddingHorizontal="@dimen/cardPadding"
         app:layout_constraintBottom_toTopOf="@+id/lblTextFight"
         app:layout_constraintTop_toBottomOf="@+id/llPokemon1"
-        app:layout_constraintVertical_weight="2">
+        app:layout_constraintVertical_weight="1">
 
         <TextView
             android:id="@+id/lblPokemon2"

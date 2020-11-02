@@ -8,4 +8,5 @@
     <string name="pikachu">Pikachu</string>
     <string name="lblTextFight">Select your opponents and start the fight to see who is the winner.</string>
     <string name="btnStart">Start the fight</string>
+    <string name="lblWinner">And the winner is...</string>
 </resources>
