@@ -2,18 +2,24 @@ package es.iessaladillo.pedrojoya.intents.ui.battle
 
 import android.content.Intent
 import android.os.Bundle
+import android.provider.MediaStore
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.os.bundleOf
 import es.iessaladillo.pedrojoya.intents.data.local.Database
 import es.iessaladillo.pedrojoya.intents.data.local.model.Pokemon
 import es.iessaladillo.pedrojoya.intents.databinding.BattleActivityBinding
 import es.iessaladillo.pedrojoya.intents.ui.selection.SelectionActivity
+
+
+private const val RC_SELECTION_ACTIVITY: Int = 1
 
 class BattleActivity : AppCompatActivity() {
 
     private lateinit var binding: BattleActivityBinding
     private lateinit var pokemon1 : Pokemon
     private lateinit var pokemon2 : Pokemon
+    private var id : Long = 0
+    private var pokemon : Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,28 +28,57 @@ class BattleActivity : AppCompatActivity() {
         setupViews()
     }
 
+    override fun onStart() {
+        super.onStart()
+        binding.llPokemon1.setOnClickListener {navigateToSelectionActivityPokemon(pokemon1.id, 1)}
+        binding.llPokemon2.setOnClickListener {navigateToSelectionActivityPokemon(pokemon2.id, 2)}
+    }
+
     private fun setupViews() {
         binding.btnStart.setOnClickListener{}
         setPokemon1(Database.getRandomPokemon())
         setPokemon2(Database.getRandomPokemon())
-        binding.lblPokemon1.setOnClickListener {navigateToSelectionActivityPokemon1(pokemon1.id)}
+        binding.btnStart.setOnClickListener { Toast.makeText(this, id.toString(), Toast.LENGTH_SHORT).show() }
     }
 
-    private fun setPokemon1(pokemon : Pokemon) {
+    private fun setPokemon1(pokemon: Pokemon) {
         pokemon1 = pokemon
         binding.imgPokemon1.setImageResource(pokemon.image)
         binding.lblPokemon1.text = pokemon.name
     }
 
-    private fun setPokemon2(pokemon : Pokemon) {
+    private fun setPokemon2(pokemon: Pokemon) {
         pokemon2 = pokemon
         binding.imgPokemon2.setImageResource(pokemon.image)
         binding.lblPokemon2.text = pokemon.name
     }
 
-    private fun navigateToSelectionActivityPokemon1(id : Long) {
-        val intent = SelectionActivity.newIntent(this, id)
-        startActivity(intent)
+    private fun navigateToSelectionActivityPokemon(id: Long, pokemon: Int) {
+        val intent = SelectionActivity.newIntent(this, id, pokemon)
+        startActivityForResult(intent, RC_SELECTION_ACTIVITY)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, intent: Intent?) {
+        super.onActivityResult(requestCode, resultCode, intent)
+        if (resultCode == RESULT_OK && requestCode == RC_SELECTION_ACTIVITY && intent != null) {
+            extractResult(intent)
+            Toast.makeText(this, "hola", Toast.LENGTH_SHORT).show()
+            if(pokemon == 1){
+                setPokemon1(Database.getPokemonById(id)!!)
+            }
+            if(pokemon == 2){
+                setPokemon2(Database.getPokemonById(id)!!)
+            }
+        }
+    }
+
+    private fun extractResult(intent: Intent) {
+        if (!intent.hasExtra(SelectionActivity.EXTRA_POKEMON) ||
+            !intent.hasExtra(SelectionActivity.WHAT_POKEMON)) {
+            throw RuntimeException()
+        }
+        id = intent.getLongExtra(SelectionActivity.EXTRA_POKEMON, 0)
+        pokemon = intent.getIntExtra(SelectionActivity.WHAT_POKEMON, 0)
     }
 
 }
